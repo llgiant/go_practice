@@ -2,11 +2,16 @@ package main
 
 import "fmt"
 
-func main() {
-	i := 24.4
-	var pf *float64
+func swap(a, b *int) {
 
-	pf = &i
-	fmt.Println("Value:", pf)
-	fmt.Println("Value:", *pf)
+	c := *a
+	*a = *b
+	*b = c
+}
+
+func main() {
+	a := 10
+	b := 20
+	swap(&a, &b)
+	fmt.Println(a, b)
 }
