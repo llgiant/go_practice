@@ -18,7 +18,7 @@ func main() {
 
 	for scanner.Scan() {
 		fields := strings.Fields(scanner.Text())
-		words = append(words, fields...
+		words = append(words, fields...)
 	}
 
 	if err := scanner.Err(); err != nil {
