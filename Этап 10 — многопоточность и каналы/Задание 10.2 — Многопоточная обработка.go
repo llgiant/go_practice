@@ -3,14 +3,13 @@ package main
 import "fmt"
 
 func main() {
-	// Создаем массив чисел 1..20
 	numbers := make([]int, 20)
 	for i := 0; i < 20; i++ {
 		numbers[i] = i + 1
 	}
 
-	// Создаем каналы
 	jobs := make(chan int, 20)
+	// Создаем канал результатов с размером буфера = количеству чисел
 	results := make(chan struct {
 		num    int
 		square int
@@ -25,15 +24,26 @@ func main() {
 	for _, num := range numbers {
 		jobs <- num
 	}
+	//close(jobs)
 
-	// Собираем и выводим результаты
+	// Создаем срез для результатов в правильном порядке
+	sortedResults := make([]struct {
+		num    int
+		square int
+	}, 20)
+
+	// Собираем результаты и размещаем по правильным индексам
 	for i := 0; i < 20; i++ {
 		result := <-results
+		sortedResults[result.num-1] = result // num-1 = индекс в срезе
+	}
+
+	// Выводим отсортированные результаты
+	for _, result := range sortedResults {
 		fmt.Printf("%d^2 = %d\n", result.num, result.square)
 	}
 }
 
-// Функция-воркер
 func worker(jobs <-chan int, results chan<- struct {
 	num    int
 	square int
@@ -42,6 +52,7 @@ func worker(jobs <-chan int, results chan<- struct {
 		results <- struct {
 			num    int
 			square int
-		}{num, num * num}
+		}{num,
+			num * num}
 	}
 }
