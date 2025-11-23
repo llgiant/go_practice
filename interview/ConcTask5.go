@@ -16,7 +16,7 @@ func worker() <-chan int {
 
 func main() {
 	timeStart := time.Now()
-	_,_=<-worker(),<-worker()
+	_,_,_=<-worker(),<-worker(),<-worker()
 	fmt.Println(time.Since(timeStart))
 	newtimeStart := time.Now()
 	_,_= worker(), worker()
