@@ -41,10 +41,10 @@ func (c *client) WithLimiter(ctx context.Context, requests []Request) {
 	for _, req := range requests {
 		<-tokens
 
-		go func() {
+		go func(r Request) {
 			defer func() { tokens <- struct{}{} }()
 			c.SendRequest(ctx, req)
-		}()
+		}(req)
 	}
 
 	for range maxGoroutines {
