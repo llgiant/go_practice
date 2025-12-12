@@ -27,12 +27,24 @@ func (c *client) SendRequest_2(ctx context.Context, request Request) error {
 	return nil
 }
 
-// ограничение количества запросов в секунду RPS
-var rps = 100
+// ограничение количества запросов в секунду RPS через берст
+var rps = 1
+var burst = 10
 
 func (c *client) WithLimiter(ctx context.Context, reqs []Request) {
 	ticker := time.NewTicker(time.Second / time.Duration(rps))
+	tickets := make(chan Request, burst)
+
 	wg := sync.WaitGroup{}
+
+	go func() {
+		for {
+			select {
+			case <-ticker.C:
+				tickets <- struct{}{}
+			}
+		}
+	}()
 
 	wg.Add(len(reqs))
 	for _, req := range reqs {
