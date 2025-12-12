@@ -33,6 +33,7 @@ var rps = 100
 func (c *client) WithLimiter(ctx context.Context, reqs []Request) {
 	ticker := time.NewTicker(time.Second / time.Duration(rps))
 	wg := sync.WaitGroup{}
+
 	wg.Add(len(reqs))
 	for _, req := range reqs {
 		<-ticker.C
@@ -51,5 +52,5 @@ func main() {
 	for i := 0; i < 1000; i++ {
 		reqs[i] = Request{Payload: "Request #" + strconv.Itoa(i+1)}
 	}
-	c.WithLimiter(ctx, requests)
+	c.WithLimiter(ctx, reqs)
 }
